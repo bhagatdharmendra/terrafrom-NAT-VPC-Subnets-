@@ -30,7 +30,7 @@ resource "aws_subnet" "subnet-2" {
     Name = "private-sonu-vpc-subnet"
   }
 }
-######### public SG
+######### public Security Group 
 resource "aws_security_group" "allow_tls" {
   name        = "public_sonu_vpc"
   description = "ssh,http"
@@ -62,7 +62,7 @@ resource "aws_security_group" "allow_tls" {
     Name = "public_sonu_vpc_SG"
   }
 }
-######### private SG
+######### private Security Group 
 resource "aws_security_group" "allow_tls2" {
   name        = "private_sonu_vpc"
   description = "ssh,http for private access only "
@@ -102,7 +102,7 @@ resource "aws_security_group" "allow_tls2" {
   }
   
 }
-##### Internet Gateways
+##### Internet Gateways for public instance ##
 resource "aws_internet_gateway" "gw" {
   vpc_id = "${aws_vpc.main.id}"
 
@@ -127,7 +127,7 @@ resource "aws_route_table" "r" {
   ]
 }
 
-######## subnet association###
+######## public subnet association with routing table  ###
 resource "aws_route_table_association" "a" {
   subnet_id      = "${aws_subnet.subnet-1.id}"
   route_table_id = "${aws_route_table.r.id}"
@@ -141,7 +141,7 @@ resource "aws_route_table_association" "a" {
 
 
  
-######### Launch EC2-instance  in public instance ######  
+######### Launch EC2-instance  in public subnet  ######  
 
 resource "aws_instance" "instance1" {
   ami           = "ami-0732b62d310b80e97"
@@ -161,7 +161,7 @@ resource "aws_instance" "instance1" {
 
 ###########
 
-########### NAT #######
+########### NAT Gateway #######
 
 resource "aws_eip" "byoip-ip" {
   vpc              = true
@@ -199,7 +199,7 @@ resource "aws_route_table_association" "routetable" {
   ]
 
 }
-######### Launch EC2-instance  in private instance ######  
+######### Launch EC2-instance  in private subnet ######  
 
 resource "aws_instance" "instance2" {
   ami           = "ami-0732b62d310b80e97"
@@ -222,3 +222,4 @@ output "MySQL_IP-instance-2" {
   value = aws_instance.instance2.private_ip
 }
 #############
+
